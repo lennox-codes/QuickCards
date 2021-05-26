@@ -5,32 +5,30 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
   lastName: {
     type: String,
     required: true,
   },
-
   email: {
     type: String,
     unique: true,
   },
-
+  //   isOAuth: {
+  //     type: Boolean,
+  //     default: false,
+  //   },
   service: {
     type: String,
     enum: ["local", "google", "facebook"],
     required: true,
     default: "local",
   },
-
   image: {
     type: String,
   },
-
   password: {
     type: String,
   },
-
   createdAt: {
     type: Date,
     default: Date.now(),
