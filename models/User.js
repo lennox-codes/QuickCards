@@ -13,10 +13,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  //   isOAuth: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
   service: {
     type: String,
     enum: ["local", "google", "facebook"],
@@ -28,11 +24,30 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
+    default: "",
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
 });
+
+// Password hash middleware
+
+UserSchema.pre("save", async function (next) {
+  const user = this;
+  if (!user.isModified("password")) return next();
+  const hashedPassword = await bcrypt.hash(user.password, 10);
+  user.password = hashedPassword;
+  next();
+});
+
+// Helper method for validating user's password
+
+UserSchema.methods.comparePassword = async function comparePassword(candidatePassword, callback) {
+  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
+    callback(err, isMatch);
+  });
+};
 
 module.exports = mongoose.model("User", UserSchema);
