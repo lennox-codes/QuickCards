@@ -1,17 +1,42 @@
 const validator = require("validator");
 const { validateRegistration, validateLogin } = require("../../custom_validators/user");
+const passport = require("passport");
 const User = require("../../models/User");
 
-// //@route GET /auth/login
-// const getLogin = (req, res) => {
-//    if(req.user) {
-//       //Return the index page if the user is already loggedIn
-//       return res.redirect("/")
-//    }
-//    //res.render("login", {})
-// },
+/* LOCAL AUTHENTICATION */
 
-//@route POST /auth/login
+// @desc Process User Login
+// @route POST /auth/login
+const postLogin = async (req, res, next) => {
+  const { validationErrors, isValid } = validateLogin(req.body);
+
+  try {
+    if (isValid) {
+      req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
+
+      passport.authenticate("local", (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+          return res.json({ error: info });
+          //return res.redirect("/");
+        }
+
+        req.login(user, (err) => {
+          if (err) return next(err);
+          return res.json({ success: { msg: "Success! you have been successfully logged in" } });
+          //return res.redirect("/cards");
+        });
+      })(req, res, next);
+    } else {
+      return res.json(validationErrors);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// @desc Process User Registration
+// @route POST /auth/register
 const postRegistration = async (req, res, next) => {
   const { validationErrors, isValid } = validateRegistration(req.body);
 
@@ -28,20 +53,14 @@ const postRegistration = async (req, res, next) => {
 
       const user = await User.findOne({ email: req.body.email });
 
-      // Run this block of code if the user already exists
       if (user) {
         return res.json({ msg: "Account with that email address or username already exists" });
-        //   return res.redirect("../signup");
       }
 
-      // Otherwise save the user in the database
       await newUser.save();
-      // Then log said user in
+
       req.login(newUser, function (err) {
-        if (err) {
-          return next(err);
-        }
-        console.log(newUser);
+        if (err) return next(err);
         return res.redirect("/");
       });
     } else {
@@ -49,9 +68,13 @@ const postRegistration = async (req, res, next) => {
       return res.json(validationErrors);
     }
   } catch (error) {
-    //console.error(error);
+    console.error(error);
   }
 };
 
-const localController = { postRegistration };
+const getSignUp = () => {};
+
+const LogOut = () => {};
+
+const localController = { postRegistration, postLogin };
 module.exports = localController;
