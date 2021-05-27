@@ -26,8 +26,6 @@ const validateRegistration = (data) => {
     validationErrors.password = "Password must be at least 8 characters long";
   }
 
-  //console.log({ errors: validationErrors, isValid: isEmpty(validationErrors) });
-
   return {
     validationErrors,
     isValid: isEmpty(validationErrors),
@@ -37,13 +35,14 @@ const validateRegistration = (data) => {
 const validateLogin = (data) => {
   const validationErrors = {};
 
-  if (!validator.isEmpty(data.email)) validationErrors.email = "Email is required";
-  if (!validator.isEmail(data.email)) validationErrors.email = "Please enter a valid email";
-  if (validator.isEmpty(req.body.password)) validationErrors.email = "Password is required";
+  if (validator.isEmpty(data.email)) validationErrors.email = "Email is required";
+  if (!validator.isEmail(data.email) && !validator.isEmpty(data.email))
+    validationErrors.email = "Please enter a valid email";
+  if (validator.isEmpty(data.password)) validationErrors.password = "Password is required";
 
   return {
     validationErrors,
-    isValid: !isEmpty(validationErrors),
+    isValid: isEmpty(validationErrors),
   };
 };
 
