@@ -91,7 +91,8 @@ const getGoogleCallback = (req, res, next) => {
 // @route GET /auth/logout
 const logOut = (req, res) => {
   req.logout();
-  res.redirect("/");
+  return res.json({ msg: "Log out Successful" });
+  //res.redirect("/");
 };
 
 const localAuthController = { postRegistration, postLogin };
