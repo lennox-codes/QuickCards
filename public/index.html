@@ -1,0 +1,65 @@
+<h1>Local Authentication SignUp</h1>
+
+<form id="sign-up" action="/auth/register" method="POST">
+  <div>
+    <label for="firstName">First Name</label>
+    <input type="text" name="firstName" id="firstName" />
+  </div>
+
+  <div>
+    <label for="lastName">Last Name</label>
+    <input type="text" name="lastName" id="lastName" />
+  </div>
+
+  <div>
+    <label for="email">Email</label>
+    <input type="text" name="email" id="email" />
+  </div>
+
+  <div>
+    <label for="password">Password</label>
+    <input type="text" name="password" id="password" />
+  </div>
+
+  <div>
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="text" name="confirmPassword" id="confirmPassword" />
+  </div>
+
+  <input type="submit" value="Submit" />
+</form>
+
+<h2>Local Login</h2>
+
+<form action="/auth/login" id="log-in" method="POST">
+  <div>
+    <label for="email">Email</label>
+    <input type="text" name="email" id="email" />
+  </div>
+
+  <div>
+    <label for="password">Password</label>
+    <input type="text" name="password" id="password" />
+  </div>
+  <input type="submit" value="Submit" />
+</form>
+
+<h2>Log In With Google</h2>
+<div class="section">
+  <button><a href="/auth/google/">Log In With Google </a></button>
+</div>
+
+<script>
+  window.onload = () => {
+    const formSignup = document.querySelector("#sign-up");
+    formSignup["firstName"].value = "Lennox";
+    formSignup["lastName"].value = "Gilbert";
+    formSignup["email"].value = "lennoxgilbert@yahoo.com";
+    formSignup["password"].value = "abc123123";
+    formSignup["confirmPassword"].value = "abc123123";
+
+    const formLogin = document.querySelector("#log-in");
+    formLogin["email"].value = "lennoxgilbert@yahoo.com";
+    formLogin["password"].value = "abc123123";
+  };
+</script>
