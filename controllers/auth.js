@@ -1,7 +1,7 @@
 const validator = require("validator");
-const { validateRegistration, validateLogin } = require("../../custom_validators/user");
+const { validateRegistration, validateLogin } = require("../custom_validators/user");
 const passport = require("passport");
-const User = require("../../models/User");
+const User = require("../models/User");
 
 /* LOCAL AUTHENTICATION */
 
@@ -74,7 +74,26 @@ const postRegistration = async (req, res, next) => {
 
 const getSignUp = () => {};
 
-const LogOut = () => {};
+//@desc Auth with Google
+//@route GET/ auth/google
+const getGoogleLogIn = (req, res, next) => {
+  passport.authenticate("google", { scope: ["email", "profile"] })(req, res, next);
+};
 
-const localController = { postRegistration, postLogin };
-module.exports = localController;
+// @desc Google with callback
+// @route GET/ auth/google/callback
+const getGoogleCallback = (req, res, next) => {
+  passport.authenticate("google", { failureRedirect: "/" })(req, res, next);
+  res.json({ success: { msg: "Google Oauth Sucessful" } });
+};
+
+// @desc Logout user
+// @route GET /auth/logout
+const logOut = (req, res) => {
+  req.logout();
+  res.redirect("/");
+};
+
+const localAuthController = { postRegistration, postLogin };
+const OpenAuthController = { getGoogleLogIn, getGoogleCallback };
+module.exports = { localAuthController, OpenAuthController, logOut };
