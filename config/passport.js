@@ -1,8 +1,6 @@
-const passport = require("passport");
-//const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/User");
-//
 
 module.exports = (passport) => {
   passport.use(
@@ -28,6 +26,44 @@ module.exports = (passport) => {
             return done(null, false, { msg: "Invalid email or password" });
           });
         });
+      }
+    )
+  );
+
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "/auth/google/callback",
+      },
+
+      //Note that "done" is the callback for the user
+      async (accessToken, refreshToken, profile, done) => {
+        const newUser = {
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
+          image: profile.photos[0].value,
+          service: profile.provider,
+          serviceId: profile.id,
+          email: profile.emails[0].value,
+        };
+
+        try {
+          let user = await User.findOne({ serviceId: profile.id });
+
+          console.log(profile.emails);
+
+          if (user) {
+            return done(null, user, { msg: `User already exists` });
+            console.log("eggs");
+          } else {
+            user = await User.create(newUser);
+            return done(null, user, { msg: `Creating new user` });
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
     )
   );
