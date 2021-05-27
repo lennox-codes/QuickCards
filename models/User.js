@@ -20,12 +20,14 @@ const UserSchema = new mongoose.Schema({
     required: true,
     default: "local",
   },
+  serviceId: {
+    type: String,
+  },
   image: {
     type: String,
   },
   password: {
     type: String,
-    default: "",
   },
   createdAt: {
     type: Date,
