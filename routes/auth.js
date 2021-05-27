@@ -1,21 +1,23 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
-const localAuthController = require("../controllers/auth/local");
-//const OpenAuthController = require("../controllers/auth/open");
+const { localAuthController, OpenAuthController, logOut } = require("../controllers/auth");
 
-// Local Authentication
+/* LOCAL AUTHENTICATION ROUTES */
+const { postLogin, postRegistration } = localAuthController;
+
 //router.get("/login", localAuthController.getLogin);
-router.post("/login", localAuthController.postLogin);
+router.post("/login", postLogin);
 // router.get("/register", localAuthController.getregister);
+router.post("/register", postRegistration);
 
-// Note that using passport authentication here isn't quite necessary
-router.post("/register", localAuthController.postRegistration);
+/* OPEN AUTHENTICATION ROUTES */
+const { getGoogleCallback, getGoogleLogIn } = OpenAuthController;
 
-// Open Authentication
-//router.get("/google", OpenAuthController);
+router.get("/google", getGoogleLogIn);
+router.get("/google/callback", getGoogleCallback);
 
-// LogOut
-//router.post("/logout", authController.logout);
+/* LOG OUT ROUTE */
+router.get("/logout", logOut);
 
 module.exports = router;
