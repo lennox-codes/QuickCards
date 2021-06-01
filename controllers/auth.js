@@ -1,10 +1,9 @@
 const validator = require("validator");
-const { validateRegistration, validateLogin } = require("../custom_validators/user");
+const { validateRegistration, validateLogin } = require("../custom-validators/user");
 const passport = require("passport");
 const User = require("../models/User");
 
 /* LOCAL AUTHENTICATION */
-
 // @desc Process User Login
 // @route POST /auth/login
 const postLogin = async (req, res, next) => {
