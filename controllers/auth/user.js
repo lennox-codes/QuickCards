@@ -1,7 +1,7 @@
 const validator = require("validator");
-const { validateRegistration, validateLogin } = require("../custom-validators/user");
+const { validateRegistration, validateLogin } = require("../../custom-validators/user");
 const passport = require("passport");
-const User = require("../models/User");
+const User = require("../../models/User");
 
 /* LOCAL AUTHENTICATION */
 // @desc Process User Login
@@ -13,7 +13,7 @@ const postLogin = async (req, res, next) => {
     if (isValid) {
       req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
 
-      passport.authenticate("local", (err, user, info) => {
+      passport.authenticate("local-user", (err, user, info) => {
         if (err) return next(err);
         if (!user) {
           return res.json({ error: info });
@@ -82,18 +82,12 @@ const getGoogleLogIn = (req, res, next) => {
 // @desc Google with callback
 // @route GET/ auth/google/callback
 const getGoogleCallback = (req, res, next) => {
-  passport.authenticate("google", { failureRedirect: "/" })(req, res, next);
-  res.json({ success: { msg: "Google Oauth Sucessful" } });
-};
-
-// @desc Logout user
-// @route GET /auth/logout
-const logOut = (req, res) => {
-  req.logout();
-  return res.json({ msg: "Log out Successful" });
-  //res.redirect("/");
+  passport.authenticate("google")(req, res, (err) => {
+    if (err) return console.log(err);
+    return res.json({ msg: "Google Oauth Successful", email: req.user.email });
+  });
 };
 
 const localAuthController = { postRegistration, postLogin };
-const OpenAuthController = { getGoogleLogIn, getGoogleCallback };
-module.exports = { localAuthController, OpenAuthController, logOut };
+const openAuthController = { getGoogleLogIn, getGoogleCallback };
+module.exports = { localAuthController, openAuthController };
