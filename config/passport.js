@@ -1,9 +1,11 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/User");
+const Admin = require("../models/Admin");
 
 module.exports = (passport) => {
   passport.use(
+    "local-user",
     new LocalStrategy(
       {
         usernameField: "email",
@@ -17,6 +19,34 @@ module.exports = (passport) => {
           if (!user.password) {
             return done(null, false, {
               msg: "Your account was registered using a sign-in provider. To enable password login, sign in using a provider, and then set a password under your user profile",
+            });
+          }
+
+          user.comparePassword(password, (err, isMatch) => {
+            if (err) return done(err);
+            if (isMatch) return done(null, user);
+            return done(null, false, { msg: "Invalid email or password" });
+          });
+        });
+      }
+    )
+  );
+
+  passport.use(
+    "local-admin",
+    new LocalStrategy(
+      {
+        usernameField: "email",
+      },
+      (email, password, done) => {
+        Admin.findOne({ email: email.toLowerCase() }, (err, user) => {
+          if (!user) {
+            return done(null, false, { msg: `Email ${email} not found` });
+          }
+
+          if (!user.password) {
+            return done(null, false, {
+              msg: `This account has not been registered.`,
             });
           }
 
@@ -49,14 +79,13 @@ module.exports = (passport) => {
           email: profile.emails[0].value,
         };
 
+        console.log(profile.email);
+
         try {
           let user = await User.findOne({ serviceId: profile.id });
 
-          console.log(profile.emails);
-
           if (user) {
             return done(null, user, { msg: `User already exists` });
-            console.log("eggs");
           } else {
             user = await User.create(newUser);
             return done(null, user, { msg: `Creating new user` });
