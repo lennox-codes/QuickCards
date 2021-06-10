@@ -57,8 +57,12 @@ app.use(passport.session());
 
 // Route Processing
 app.use("/auth", require("./routes/auth"));
+app.use("/admin", require("./routes/admin"));
+//app.use("/cards", require("./routes/cards"));
 
 app.listen(
   process.env.PORT,
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT}`)
+  console.log(
+    `Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT}`
+  )
 );
