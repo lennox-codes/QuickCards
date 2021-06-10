@@ -58,7 +58,7 @@ app.use(passport.session());
 // Route Processing
 app.use("/auth", require("./routes/auth"));
 app.use("/admin", require("./routes/admin"));
-app.use("/cards", require("./routes/cards"));
+//app.use("/cards", require("./routes/cards"));
 
 app.listen(
   process.env.PORT,
