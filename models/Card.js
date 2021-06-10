@@ -17,9 +17,13 @@ const CardSchema = new mongoose.Schema({
     default: "starter",
   },
 
+  image: {
+    type: String,
+    required: true,
+  },
+
   content: {
-    image: String,
-    text: [String],
+    type: String,
   },
 
   recipientName: {
