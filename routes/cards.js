@@ -1,16 +1,19 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
+const { getAllStarterCards, getSingleCard } = require("../controllers/cards");
 
 //These represent the very basic of the basic and nothing particularly complicated for now
 
 // @desc Show all starter cards
-// @route GET /cards/starter
+// @route GET /cards/
 // This should show all the cards of type: starter
+router.get("/", getAllStarterCards);
 
 // @desc  Show add page/starter page based on starter card id
 // @route GET /cards/add/:starterid
 // This should navigate you to editing page with the starter information
+router.get("/:cardId", getSingleCard);
 
 // @desc Create new user card
 // @route POST /cards/:id
@@ -33,3 +36,5 @@ const router = express.Router();
 // @desc Delete user card
 // @route DELETE /cards/:id
 // This is highly important as this might risk the final recipient that card if they log in to request it/hence another copy of the card might need to be made for the recipient to save if they do have an account//
+
+module.exports = router;
